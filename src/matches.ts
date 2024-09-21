@@ -9,7 +9,6 @@ import * as fs from "fs";
 
 export class MatchRetriever {
   private matches: CMsgClientToGCGetMatchHistoryResponse_Match[] = [];
-  private matchIDs: bigint[] = [];
   private isDone: boolean = false;
   private batchCount: number = 0;
 
@@ -57,30 +56,19 @@ export class MatchRetriever {
     console.log(`Got batch ${this.batchCount}... Processing...`);
     const matchHistory = CMsgClientToGCGetMatchHistoryResponse.fromBinary(body);
 
-    // Get all match IDs
-    const batchMatchIDs = matchHistory.matches
-      .map((match) => match.matchId)
-      .filter((matchID) => matchID !== undefined);
-
-    // If all match IDs are already in our list, we're done
-    if (
-      batchMatchIDs.every(
-        (matchID) => matchID !== undefined && this.matchIDs.includes(matchID),
-      )
-    ) {
-      console.log(`No new matches... We're done!`);
+    // Add new matches to our list
+    this.matches.push(...matchHistory.matches);
+    
+    if (!matchHistory.continueCursor) {
+      console.log('There is no continue cursor... We\'re done!');
 
       // Export matches
       fs.writeFileSync("matches.json", JSON.stringify(this.matches, null, 4));
       this.isDone = true;
-      return;
+      return
     }
 
-    // Add new matches to our list
-    this.matches.push(...matchHistory.matches);
-    this.matchIDs.push(...batchMatchIDs);
-
-    // Get the next batch
+    // Get next batch
     this.getAllMyMatches(matchHistory.continueCursor);
   }
 
