@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/app.js",
     "dev": "npm run compile && npm run start",
     "format": "prettier --write ."
   },
@@ -13,11 +13,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "steam-user": "^5.2.0"
+    "steam-user": "^5.2.0",
+    "terminal-kit": "^3.1.1"
   },
   "devDependencies": {
     "@protobuf-ts/plugin": "^2.9.4",
     "@types/steam-user": "^5.0.2",
+    "@types/terminal-kit": "^2.5.6",
     "prettier": "^3.3.3",
     "typescript": "^5.6.2"
   }
