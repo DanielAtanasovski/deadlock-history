@@ -30,23 +30,20 @@ export class MatchRetriever {
 
     // Match history request
     const matchHistoryRequest: CMsgClientToGCGetMatchHistory = {
-        accountId: steamID.accountid,
-    }
+      accountId: steamID.accountid,
+    };
 
     if (continueCursor) {
-        matchHistoryRequest.continueCursor = continueCursor;
+      matchHistoryRequest.continueCursor = continueCursor;
     }
 
     // Let's get our match history
-    const oldBatchCount = this.batchCount;
     console.log(`Requesting batch ${this.batchCount + 1}...`);
     this.client.sendToGC(
       this.appId,
       EGCCitadelClientMessages.k_EMsgClientToGCGetMatchHistory,
       {},
-      Buffer.from(
-        CMsgClientToGCGetMatchHistory.toBinary(matchHistoryRequest),
-      ),
+      Buffer.from(CMsgClientToGCGetMatchHistory.toBinary(matchHistoryRequest)),
       this.onGetMatchHistory.bind(this),
     );
   }
@@ -58,14 +55,14 @@ export class MatchRetriever {
 
     // Add new matches to our list
     this.matches.push(...matchHistory.matches);
-    
+
     if (!matchHistory.continueCursor) {
-      console.log('There is no continue cursor... We\'re done!');
+      console.log("There is no continue cursor... We're done!");
 
       // Export matches
       fs.writeFileSync("matches.json", JSON.stringify(this.matches, null, 4));
       this.isDone = true;
-      return
+      return;
     }
 
     // Get next batch

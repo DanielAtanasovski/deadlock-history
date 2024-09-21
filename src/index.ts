@@ -52,7 +52,6 @@ client.on("loggedOn", () => {
   client.gamesPlayed([1422450]);
 });
 
-
 // Entry point
 client.on("appLaunched", (appId: any) => {
   console.log(`Launched app ${appId}`);
