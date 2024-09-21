@@ -1,5 +1,5 @@
 /**
- * Steam Bot that opens Deadlock
+ * Entrypoint
  */
 
 import SteamUser from "steam-user";
