@@ -1,6 +1,6 @@
 import { createInterface } from "readline";
 
-interface UserCredentials {
+export interface UserCredentials {
   accountName: string;
   password: string;
 }
@@ -9,8 +9,8 @@ interface UserCredentials {
  * @returns {Promise<{accountName: string, password: string}>}
  */
 export async function collectCredentials(): Promise<UserCredentials> {
-  let accountName = await promptAsync("Account Name: ", false);
-  let password = await promptAsync("Password: ", true);
+  const accountName = await promptAsync("Account Name: ", false);
+  const password = await promptAsync("Password: ", true);
   return { accountName, password };
 }
 
@@ -25,7 +25,7 @@ function promptAsync(
   sensitiveInput: boolean,
 ): Promise<string> {
   return new Promise((resolve) => {
-    let rl = createInterface({
+    const rl = createInterface({
       input: process.stdin,
       output: sensitiveInput ? undefined : process.stdout,
       terminal: true,

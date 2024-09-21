@@ -48,7 +48,7 @@ export class MatchRetriever {
     );
   }
 
-  private onGetMatchHistory(appId: number, type: any, body: Buffer) {
+  private onGetMatchHistory(appId: number, type: number, body: Buffer) {
     this.batchCount++;
     console.log(`Got batch ${this.batchCount}... Processing...`);
     const matchHistory = CMsgClientToGCGetMatchHistoryResponse.fromBinary(body);
