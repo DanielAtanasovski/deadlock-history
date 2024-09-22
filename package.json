@@ -1,7 +1,6 @@
 {
   "name": "deadlock-node",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc",
@@ -12,12 +11,12 @@
     "lint-and-format": "npm run lint && npm run format"
   },
   "author": "",
-  "license": "ISC",
   "description": "",
   "dependencies": {
     "steam-user": "^5.2.0",
     "terminal-kit": "^3.1.1"
   },
+  "type": "commonjs",
   "devDependencies": {
     "@eslint/js": "^9.11.0",
     "@protobuf-ts/plugin": "^2.9.4",
@@ -26,6 +25,7 @@
     "eslint": "^9.11.0",
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.6.0"
   }
