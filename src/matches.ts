@@ -5,7 +5,7 @@ import {
   CMsgClientToGCGetMatchHistoryResponse_Match,
   EGCCitadelClientMessages,
 } from "./proto/citadel_gcmessages_client";
-import * as fs from "fs";
+import { log, LogLevel } from "./terminalUtils";
 
 export class MatchRetriever {
   private matches: CMsgClientToGCGetMatchHistoryResponse_Match[] = [];
@@ -14,17 +14,22 @@ export class MatchRetriever {
 
   constructor(
     private client: SteamUser,
-    private appId: number,
+    private appId: number
   ) {
     this.client = client;
     this.appId = appId;
   }
 
-  public getAllMyMatches(continueCursor?: bigint) {
+  public getMatches() {
+    return this.matches;
+  }
+
+  public queryMatchHistory(continueCursor?: bigint) {
+    // this.isDone = false;
     // Get our id
     const steamID = this.client.steamID;
     if (!steamID) {
-      console.error("No SteamID");
+      log(LogLevel.ERROR, "No SteamID");
       return;
     }
 
@@ -38,35 +43,34 @@ export class MatchRetriever {
     }
 
     // Let's get our match history
-    console.log(`Requesting batch ${this.batchCount + 1}...`);
+    log(LogLevel.DEBUG, `Requesting batch ${this.batchCount + 1}...`);
     this.client.sendToGC(
       this.appId,
       EGCCitadelClientMessages.k_EMsgClientToGCGetMatchHistory,
       {},
       Buffer.from(CMsgClientToGCGetMatchHistory.toBinary(matchHistoryRequest)),
-      this.onGetMatchHistory.bind(this),
+      this.onGetMatchHistory.bind(this)
     );
   }
 
-  private onGetMatchHistory(appId: number, type: any, body: Buffer) {
+  private onGetMatchHistory(appId: number, type: number, body: Buffer) {
     this.batchCount++;
-    console.log(`Got batch ${this.batchCount}... Processing...`);
+    log(LogLevel.DEBUG, `Got batch ${this.batchCount}... Processing...`);
     const matchHistory = CMsgClientToGCGetMatchHistoryResponse.fromBinary(body);
 
     // Add new matches to our list
     this.matches.push(...matchHistory.matches);
 
     if (!matchHistory.continueCursor) {
-      console.log("There is no continue cursor... We're done!");
+      log(LogLevel.DEBUG, "There is no continue cursor... We're done!");
 
       // Export matches
-      fs.writeFileSync("matches.json", JSON.stringify(this.matches, null, 4));
       this.isDone = true;
       return;
     }
 
     // Get next batch
-    this.getAllMyMatches(matchHistory.continueCursor);
+    this.queryMatchHistory(matchHistory.continueCursor);
   }
 
   public isDoneRetrieving() {
